@@ -1,0 +1,41 @@
+version: "3.9"
+# each service represents one container here it is book, mysql & redis
+services:
+  book:
+    container_name: book
+    restart: on-failure
+    build: ../  # build is path/to/Dockerfile is coz build will build the image from Dockerfile
+    depends_on: # to ensure that mysql & redis container starts running before book container
+      - mysql
+      - redis
+    ports:
+      - 6000:6000 # calls going to local_host's port=6000 --fwd to-> container's port 6000
+
+
+  mysql:
+    image: mysql:8.4 # instead of using build cmd we use image to be pulled from hub.docker.com directly
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1 # we can specify passwords also
+    volumes:
+      - ./mysql-docker/init.sql:/data/application/init.sql
+    command: --init-file /data/application/init.sql
+    ports:
+      - 3306:3306
+
+  redis:
+    container_name: redis
+    image: redis:7.2
+    restart: always
+    ports:
+      - 6379:6379
+
+# run command:
+# docker-compose up
+# shut down command
+# docker-compose down
+
+# test app by calling API
+# POST 127.0.0.1:6000/book
+# GET 127.0.0.1:6000/book
+# GET 127.0.0.1:6000/book/cache

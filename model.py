@@ -2,8 +2,11 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine, Column, Integer, String
 from dataclasses import dataclass
 
-SQLITE_CONNECT_DB_URI = 'sqlite:///data.db'
-engine = create_engine(SQLITE_CONNECT_DB_URI)
+# CONNECT_DB_URI = 'sqlite:///data.db'
+CONNECT_DB_URI = MYSQL_DB_CONNECT_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format("root","","host.docker.internal","3306","data_db")  # uncomment this if running via docker-compose
+# CONNECT_DB_URI = MYSQL_DB_CONNECT_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4'.format("root","","127.0.0.1","3306","data_db") # comment this & uncomment above if running from docker ^
+
+engine = create_engine(CONNECT_DB_URI)
 session = sessionmaker(bind=engine)()
 Base = declarative_base()
 
